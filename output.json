@@ -1,0 +1,30 @@
+[
+  {
+    "DOB": "1990-05-15",
+    "Kit Number": "10",
+    "Name": "张伟",
+    "Nationality": "中国",
+    "Position": "前锋"
+  },
+  {
+    "DOB": "1992-08-22",
+    "Kit Number": "8",
+    "Name": "李娜",
+    "Nationality": "中国",
+    "Position": "中场"
+  },
+  {
+    "DOB": "1988-11-30",
+    "Kit Number": "5",
+    "Name": "王强",
+    "Nationality": "中国",
+    "Position": "后卫"
+  },
+  {
+    "DOB": "1995-02-12",
+    "Kit Number": "1",
+    "Name": "陈杰",
+    "Nationality": "中国",
+    "Position": "守门员"
+  }
+]

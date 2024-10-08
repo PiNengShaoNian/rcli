@@ -1,9 +1,11 @@
 use core::fmt;
-use std::{path::PathBuf, str::FromStr};
+use std::{fs, path::PathBuf, str::FromStr};
 
 use clap::Parser;
 
-use crate::utils::verify_path;
+use crate::{
+    process_text_generate, process_text_sign, process_text_verify, utils::verify_path, CmdExecutor,
+};
 
 use super::verify_file;
 
@@ -15,6 +17,40 @@ pub enum TextSubCommand {
     Verify(TextVerifyOpts),
     #[command(about = "Generate a new key")]
     Generate(TextKeyGenerateOpts),
+}
+
+impl CmdExecutor for TextSubCommand {
+    async fn execute(self) -> anyhow::Result<()> {
+        match self {
+            TextSubCommand::Sign(opts) => {
+                let signed = process_text_sign(opts.input.as_str(), &opts.key, opts.format)?;
+                println!("{}", signed);
+                Ok(())
+            }
+            TextSubCommand::Verify(opts) => {
+                let verified =
+                    process_text_verify(opts.input.as_str(), &opts.key, opts.format, &opts.sig)?;
+                println!("{}", verified);
+                Ok(())
+            }
+            TextSubCommand::Generate(opts) => {
+                let key = process_text_generate(opts.format)?;
+                match opts.format {
+                    TextSignFormat::Blake3 => {
+                        let name = opts.output.join("blake3.txt");
+                        fs::write(name, &key[0])?;
+                    }
+                    TextSignFormat::Ed25519 => {
+                        let name = &opts.output;
+                        fs::write(name.join("ed25519.sk"), &key[0])?;
+                        fs::write(name.join("ed25519.pk"), &key[1])?;
+                    }
+                }
+                println!("{:?}", key);
+                Ok(())
+            }
+        }
+    }
 }
 
 #[derive(Debug, Parser)]
